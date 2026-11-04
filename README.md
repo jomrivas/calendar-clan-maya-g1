@@ -23,17 +23,18 @@ npm run dev                   # http://localhost:3000
 | `npm run typecheck` | Verificar tipos |
 | `npm run build` | Build para Vercel (`.vercel/output`) |
 
-## 2. Supabase (una sola vez)
+## 2. Supabase
 
-1. Crear el proyecto en **supabase.com**, región `us-east-1` (la más cercana a SV).
-2. **SQL Editor** → pegar y ejecutar `supabase/migrations/20261103000000_init.sql`.
-3. **Authentication → Sign In / Providers**:
-   - Desactivar *Allow new users to sign up* (el super_admin crea las cuentas).
-   - Desactivar *Confirm email* (opcional, porque las cuentas se crean ya confirmadas).
-4. **Authentication → Users → Add user**: crear tu cuenta (marcar *Auto Confirm*).
-5. **SQL Editor** → ejecutar `supabase/seed/bootstrap_super_admin.sql` (con tu email).
-6. **Authentication → URL Configuration** → *Site URL* = `https://calendar-clanmaya-g1.vercel.app`.
-7. Copiar desde **Project Settings → API Keys**: URL, publishable key y secret key.
+Proyecto **`calendar-clan-maya-g1`** · ref `jrnulomihiemizemjpat` · región `us-east-1` · URL `https://jrnulomihiemizemjpat.supabase.co`.
+Las migraciones de `supabase/migrations/` **ya están aplicadas**. Quedan estos pasos manuales en el Dashboard:
+
+1. **Authentication → Sign In / Providers → Email**: desactivar *Allow new users to sign up*.
+2. **Authentication → Users → Add user → Create new user**: tu email + contraseña, con *Auto Confirm User* marcado.
+3. **SQL Editor** → ejecutar `supabase/seed/bootstrap_super_admin.sql`.
+4. **Authentication → URL Configuration** → *Site URL* = `https://calendar-clanmaya-g1.vercel.app`.
+5. **Project Settings → API Keys** → copiar la *secret key* (`sb_secret_…`) para `SUPABASE_SERVICE_ROLE_KEY`.
+
+> Para un proyecto nuevo desde cero: ejecutá las migraciones en orden (por nombre) en el SQL Editor o con `npx supabase db push`.
 
 ## 3. Vercel
 
@@ -56,8 +57,8 @@ npm run dev                   # http://localhost:3000
 - **Feriados:** `/admin/holidays` (vienen precargados 2027–2028).
 - **Corte:** en el dashboard de admin (por defecto, sábado a las 3:00 PM).
 - **Regenerar tipos tras cambios de esquema:**
-  `npx supabase gen types typescript --project-id <ref> > src/integrations/supabase/types.ts`
+  `npx supabase gen types typescript --project-id jrnulomihiemizemjpat > src/integrations/supabase/types.ts`
 
 ## Seguridad
 - `SUPABASE_SERVICE_ROLE_KEY` nunca lleva prefijo `VITE_` ni se commitea.
-- Las reglas de negocio y los permisos viven en RLS y triggers; están probados con 15 casos (ver historial del commit inicial).
+- Las reglas de negocio y los permisos viven en RLS y triggers; están probados con 17 casos (ver historial del commit inicial).

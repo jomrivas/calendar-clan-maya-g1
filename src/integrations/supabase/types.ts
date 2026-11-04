@@ -1,3 +1,4 @@
+// Generado con: npx supabase gen types typescript --project-id jrnulomihiemizemjpat
 export type Json =
   | string
   | number
@@ -10,7 +11,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
@@ -66,7 +67,22 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "attendances_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendances_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "semester_attendance"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       holidays_sv: {
         Row: {
@@ -123,7 +139,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
@@ -155,18 +171,9 @@ export type Database = {
     }
     Functions: {
       attendance_cutoff: { Args: { _sat: string }; Returns: string }
-      has_admin_access: { Args: { _user_id: string }; Returns: boolean }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "user" | "super_admin"
+      app_role: "user" | "admin" | "super_admin"
       attendance_status: "Asistió" | "No Asistió" | "Permiso"
     }
     CompositeTypes: {
@@ -295,7 +302,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user", "super_admin"],
+      app_role: ["user", "admin", "super_admin"],
       attendance_status: ["Asistió", "No Asistió", "Permiso"],
     },
   },

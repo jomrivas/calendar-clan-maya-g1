@@ -47,7 +47,7 @@ Navegador ──► Vercel (TanStack Start SSR + server functions, Nitro preset 
 ```
 auth.users 1─1 profiles      (id, full_name, email, is_active, created_at)
 auth.users 1─1 user_roles    (user_id UNIQUE, role app_role)
-auth.users 1─N attendances   (user_id, saturday_date, status, justification) UNIQUE(user_id, saturday_date)
+profiles   1─N attendances   (user_id, saturday_date, status, justification) UNIQUE(user_id, saturday_date)
 holidays_sv                  (holiday_date PK, name)
 app_settings (fila única)    (cutoff_day_offset 0–6, cutoff_time)
 VIEW semester_attendance     (security_invoker) → % por usuario del semestre actual
@@ -66,7 +66,8 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 | Fase | Entregable | Estado |
 |---|---|---|
 | **1. Migración** | Repo limpio sin Lovable, migración consolidada, build para Vercel, RLS probado | ✅ Listo (local) |
-| **2. Despliegue** | Proyecto Supabase nuevo, bootstrap del super_admin, proyecto Vercel `calendar-clanmaya-g1`, alta de ~12 usuarios | ⏳ Pendiente de tu confirmación |
+| **2a. Supabase** | Proyecto `jrnulomihiemizemjpat` (us-east-1), 4 migraciones aplicadas, advisors de seguridad en 0 | ✅ Listo |
+| **2b. Despliegue** | Bootstrap super_admin, proyecto Vercel `calendar-clanmaya-g1`, alta de ~12 usuarios | ⏳ Pendiente |
 | **3. Reportes** | Dashboard de métricas (tendencia por sábado, ranking, % por semestre), filtros por rango y usuario, **exportar a Excel** (.xlsx) | 🔜 |
 | **4. UI Clan Maya** | Design system de la marca (paleta, tipografía, grecas, logo) aplicado a todas las pantallas | 🔜 |
 | **5. QA** | Suite E2E con Playwright (POM): login, marcar, corte, permisos por rol, exportación | 🔜 |
@@ -94,4 +95,7 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 | La vista penalizaba sábados previos al alta | Cuenta desde `created_at` del perfil |
 | El backfill marcaba "No Asistió" antes del alta | Respeta la fecha de alta y usa `cutoffUtc()` |
 | Registro público abierto | `VITE_ALLOW_SIGNUP=false` por defecto |
+| Funciones de rol expuestas vía `/rpc` | Movidas al esquema `private` (no expuesto) |
+| `attendances` sin FK a `profiles` (join del admin fallaba en silencio) | FK `attendances.user_id → profiles.id` |
+| RLS con `auth.uid()` evaluado por fila | `(select auth.uid())` → evaluado una vez por consulta |
 | `.env` versionado y código muerto de Lovable | `.env.example` y código muerto eliminado; 43 → 15 componentes UI |
