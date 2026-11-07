@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, CheckCircle2, XCircle, FileText, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, XCircle, FileText, Loader2, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   formatYmd,
@@ -38,6 +38,7 @@ function DashboardPage() {
   const [view, setView] = useState({ year: today.getUTCFullYear(), month: today.getUTCMonth() });
   const [justifyFor, setJustifyFor] = useState<string | null>(null);
   const [justifyText, setJustifyText] = useState("");
+  const [exporting, setExporting] = useState(false);
 
   const sem = currentSemester();
 
@@ -132,6 +133,37 @@ function DashboardPage() {
 
   const saturdays = getSaturdaysOfMonth(view.year, view.month);
 
+  // Descarga el historial del año visible como .xlsx (ExcelJS se carga bajo demanda).
+  const exportHistory = async () => {
+    setExporting(true);
+    try {
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, is_active, created_at")
+        .eq("id", userId)
+        .single();
+      if (error) throw error;
+      const { exportRoverHistory } = await import("@/lib/excel");
+      await exportRoverHistory({
+        profile,
+        attendances: attendance.map((a: any) => ({
+          user_id: userId,
+          saturday_date: a.saturday_date,
+          status: a.status,
+          justification: a.justification,
+        })),
+        holidays: holidays.map((h: any) => h.holiday_date),
+        year: view.year,
+        today: formatYmd(nowInSV()),
+      });
+      toast.success(`Historial ${view.year} descargado`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "No se pudo generar el Excel");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const prevMonth = () =>
     setView((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { ...v, month: v.month - 1 }));
   const nextMonth = () =>
@@ -139,11 +171,17 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Mi asistencia</h1>
-        <p className="text-sm text-muted-foreground">
-          Confirma tu asistencia {describeCutoff(settings)} (hora de El Salvador).
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Mi asistencia</h1>
+          <p className="text-sm text-muted-foreground">
+            Confirma tu asistencia {describeCutoff(settings)} (hora de El Salvador).
+          </p>
+        </div>
+        <Button variant="outline" onClick={exportHistory} disabled={exporting}>
+          {exporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+          Descargar mi historial {view.year}
+        </Button>
       </header>
 
       <div className="grid gap-4 md:grid-cols-3">

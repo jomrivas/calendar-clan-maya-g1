@@ -65,10 +65,10 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 
 | Fase | Entregable | Estado |
 |---|---|---|
-| **1. Migración** | Repo limpio sin Lovable, migración consolidada, build para Vercel, RLS probado | ✅ Listo (local) |
+| **1. Migración** | Repo limpio sin Lovable, migración consolidada, build para Vercel, RLS probado | ✅ Listo |
 | **2a. Supabase** | Proyecto `jrnulomihiemizemjpat` (us-east-1), 4 migraciones aplicadas, advisors de seguridad en 0 | ✅ Listo |
-| **2b. Despliegue** | Bootstrap super_admin, proyecto Vercel `calendar-clanmaya-g1`, alta de ~12 usuarios | ⏳ Pendiente |
-| **3. Reportes** | Dashboard de métricas (tendencia por sábado, ranking, % por semestre), filtros por rango y usuario, **exportar a Excel** (.xlsx) | 🔜 |
+| **2b. Despliegue** | Bootstrap super_admin, proyecto Vercel `calendar-clanmaya-g1` (iad1), CVE TanStack parcheada, flujo de usuarios validado | ✅ Listo |
+| **3. Reportes** | `/admin/reportes` (KPIs, 3 gráficos, matriz, registros, filtros) + exportar a Excel (clan y rover) | ✅ Listo |
 | **4. UI Clan Maya** | Design system de la marca (paleta, tipografía, grecas, logo) aplicado a todas las pantallas | 🔜 |
 | **5. QA** | Suite E2E con Playwright (POM): login, marcar, corte, permisos por rol, exportación | 🔜 |
 
@@ -81,6 +81,33 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 | Amarillo pirámide | `#E6BE3C` |
 | Morado Scout | `#4A1A7B` |
 | Crema de fondo | `#FAF6F1` |
+
+## 5.1 Fase 3 — Reportes
+
+**Decisiones:** ExcelJS en el navegador (lazy) · Recharts · umbral de riesgo 75% · admins ven todo, cada rover exporta lo suyo.
+
+```
+/admin/reportes ──useQuery──► getReportData({from,to})   (server fn, admin-only, ≤3 años)
+      │                         └─ profiles + attendances + holidays del rango
+      └─ buildReport()  (src/lib/reports.ts, puro, 16 tests)
+            ├─ KPIs · bySaturday · rows · matrix · records
+            ├─ <ReportBody/>  (src/components/reports/report-body.tsx)
+            └─ exportClanReport() ─► import("exceljs") ─► .xlsx (src/lib/excel.ts, 2 tests round-trip)
+/dashboard ── "Descargar mi historial {año}" ─► exportRoverHistory() (RLS: solo sus datos)
+```
+
+| Bloque | Detalle |
+|---|---|
+| Filtros | Período (semestre actual/anterior, año actual/anterior, rango libre) · rover · estado (afecta *Registros*) · incluir inactivos |
+| KPIs | % promedio del clan · sábados realizados · asistentes promedio · permisos · rovers en riesgo (< 75%) |
+| Gráficos | Tendencia por sábado (barras apiladas) · ranking por rover con línea de umbral · distribución (dona) |
+| Matriz | Rover × sábado: A / P / X / — (sin marcar) / · (antes del alta) |
+| Excel clan | Hojas *Portada* (filtros + KPIs + leyenda), *Resumen*, *Matriz*, *Registros*; autofiltros y paneles fijos |
+| Excel rover | Resumen por semestre + historial del año visible (sin sábados previos al alta) |
+
+**Reglas de cálculo** (idénticas a `semester_attendance`): solo sábados, sin feriados, hasta hoy (SV), cada rover desde su `created_at` (SV); % = (Asistió + Permiso) / elegibles.
+
+**Peso en bundle:** Recharts va solo en el chunk de `/admin/reportes` (~123 KB gz); ExcelJS (~271 KB gz) se descarga únicamente al exportar.
 
 ## 6. Cambios respecto a la versión de Lovable
 

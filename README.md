@@ -31,6 +31,7 @@ SUPABASE_SERVICE_ROLE_KEY=<secret key sb_secret_…  — solo servidor, nunca co
 |---|---|
 | `npm run dev` | Servidor de desarrollo |
 | `npm run typecheck` | Verificar tipos |
+| `npm test` | Tests unitarios (Vitest): cálculos de reportes y Excel |
 | `npm run build` | Build para Vercel (`.vercel/output`) |
 
 ## 2. Supabase
@@ -66,6 +67,7 @@ Las migraciones de `supabase/migrations/` **ya están aplicadas**. Quedan estos 
 - **Alta de rovers:** `/admin/users` → *Nuevo usuario* (super_admin).
 - **Feriados:** `/admin/holidays` (vienen precargados 2027–2028).
 - **Corte:** en el dashboard de admin (por defecto, sábado a las 3:00 PM).
+- **Reportes:** `/admin/reportes` → filtros, gráficos y *Exportar a Excel*. Cada rover descarga su historial desde *Mi asistencia*.
 - **Regenerar tipos tras cambios de esquema:**
   `npx supabase gen types typescript --project-id jrnulomihiemizemjpat > src/integrations/supabase/types.ts`
 

@@ -1,7 +1,15 @@
 import { createFileRoute, Outlet, Navigate, Link, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, LogOut, ShieldCheck, Users, CalendarOff, Loader2 } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  ShieldCheck,
+  Users,
+  CalendarOff,
+  Loader2,
+  BarChart3,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import clanMayaLogo from "@/assets/clan-maya-logo.png";
 
@@ -27,6 +35,7 @@ function AuthenticatedLayout() {
     ...(isAdmin
       ? [
           { to: "/admin", label: "Dashboard admin", icon: ShieldCheck },
+          { to: "/admin/reportes", label: "Reportes", icon: BarChart3 },
           { to: "/admin/users", label: "Usuarios", icon: Users },
           { to: "/admin/holidays", label: "Feriados", icon: CalendarOff },
         ]
@@ -42,7 +51,10 @@ function AuthenticatedLayout() {
         </div>
         <nav className="flex gap-1 overflow-x-auto p-3 lg:flex-col lg:overflow-visible">
           {links.map(({ to, label, icon: Icon }) => {
-            const active = pathname === to || (to !== "/dashboard" && pathname.startsWith(to));
+            // "/dashboard" y "/admin" solo con coincidencia exacta (tienen subrutas hermanas en el menú).
+            const exact = to === "/dashboard" || to === "/admin";
+            const active =
+              pathname === to || pathname === `${to}/` || (!exact && pathname.startsWith(`${to}/`));
             return (
               <Link
                 key={to}
