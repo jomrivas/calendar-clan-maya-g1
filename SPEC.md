@@ -69,7 +69,7 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 | **2a. Supabase** | Proyecto `jrnulomihiemizemjpat` (us-east-1), 4 migraciones aplicadas, advisors de seguridad en 0 | ✅ Listo |
 | **2b. Despliegue** | Bootstrap super_admin, proyecto Vercel `calendar-clanmaya-g1` (iad1), CVE TanStack parcheada, flujo de usuarios validado | ✅ Listo |
 | **3. Reportes** | `/admin/reportes` (KPIs, 3 gráficos, matriz, registros, filtros) + exportar a Excel (clan y rover) | ✅ Listo |
-| **4. UI Clan Maya** | Design system de la marca (paleta, tipografía, grecas, logo) aplicado a todas las pantallas | 🔜 |
+| **4. UI Clan Maya** | Tokens de marca, Poppins/Lato auto-hospedadas, greca, login y sidebar nuevos, favicon; 0 violaciones WCAG 2.1 AA (axe) | ✅ Listo |
 | **5. QA** | Suite E2E con Playwright (POM): login, marcar, corte, permisos por rol, exportación | 🔜 |
 
 ### Paleta de marca (para Fase 4)
@@ -108,6 +108,25 @@ VIEW semester_attendance     (security_invoker) → % por usuario del semestre a
 **Reglas de cálculo** (idénticas a `semester_attendance`): solo sábados, sin feriados, hasta hoy (SV), cada rover desde su `created_at` (SV); % = (Asistió + Permiso) / elegibles.
 
 **Peso en bundle:** Recharts va solo en el chunk de `/admin/reportes` (~123 KB gz); ExcelJS (~271 KB gz) se descarga únicamente al exportar.
+
+## 5.2 Fase 4 — Identidad visual
+
+Fuente de verdad: el sitio del clan (`clan-maya-g1.netlify.app`) — mismos colores, tipografías y greca.
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--primary` / `navy` | `#0F1D38` | Botones, sidebar, títulos |
+| `gold` / `gold-2` | `#E6BE3C` / `#F4D876` | Acentos sobre navy, greca, CTA de exportar |
+| `purple` | `#4A1A7B` (foco `#6B2CAA`) | Eyebrows, chip de rol, **anillo de foco** |
+| `brown` → `gold` | gradiente | Barra de progreso del semestre |
+| `--background` / `cream` | `#FAF6F1` | Fondo general |
+| `--success` / `--destructive` | `#2E7D4F` / `#B3261E` | Estados (variantes `-strong` para texto sobre tinte) |
+| Tipografía | Poppins 500–800 (títulos) · Lato 400/700 (texto) | `@fontsource`, subset latin, sin Google Fonts |
+| Radio | `0.875rem` | Tarjetas y controles |
+
+**Componentes de marca** (`src/components/brand/`): `Greca`, `BrandMark`, `PageHeader` (eyebrow + título + acciones), `AuthShell` (login/registro).
+
+**Accesibilidad:** el oro no se usa como texto sobre claro ni como foco (1.65:1); el foco es púrpura (7.6:1). Auditoría axe-core WCAG 2.1 AA en las 6 pantallas: 0 violaciones (incluye etiquetas accesibles agregadas a controles heredados).
 
 ## 6. Cambios respecto a la versión de Lovable
 

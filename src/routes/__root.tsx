@@ -69,15 +69,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Calendar Check Clan Maya" },
-      { name: "description", content: "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales." },
+      {
+        name: "description",
+        content:
+          "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales.",
+      },
       { property: "og:title", content: "Calendar Check Clan Maya" },
       { name: "twitter:title", content: "Calendar Check Clan Maya" },
-      { property: "og:description", content: "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales." },
-      { name: "twitter:description", content: "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales." },
+      {
+        property: "og:description",
+        content:
+          "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Calendar Check Clan Maya: portal de control de asistencia sabatina con justificaciones y métricas semestrales.",
+      },
       { name: "twitter:card", content: "summary" },
       { property: "og:type", content: "website" },
+      { name: "theme-color", content: "#0F1D38" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+      { rel: "icon", type: "image/png", href: "/favicon-32.png", sizes: "32x32" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -104,7 +122,9 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
       router.invalidate();
       queryClient.invalidateQueries();
     });

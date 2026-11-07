@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/brand/page-header";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -112,30 +113,33 @@ function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reportes</h1>
-          <p className="text-sm text-muted-foreground">
-            Métricas de asistencia sabatina · {periodLabel}
-          </p>
-        </div>
-        <Button onClick={onExport} disabled={!report || exporting}>
-          {exporting ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Download className="mr-2 h-4 w-4" />
-          )}
-          Exportar a Excel
-        </Button>
-      </header>
+      <PageHeader
+        eyebrow="Administración"
+        title="Reportes"
+        description={<>Métricas de asistencia sabatina · {periodLabel}</>}
+        actions={
+          <Button
+            onClick={onExport}
+            disabled={!report || exporting}
+            className="bg-gold-gradient text-navy hover:opacity-90"
+          >
+            {exporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Exportar a Excel
+          </Button>
+        }
+      />
 
       {/* Filtros */}
       <Card>
         <CardContent className="grid gap-4 pt-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <Label>Período</Label>
+            <Label htmlFor="f-periodo">Período</Label>
             <Select value={periodKey} onValueChange={setPeriodKey}>
-              <SelectTrigger>
+              <SelectTrigger id="f-periodo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -177,20 +181,20 @@ function ReportsPage() {
             </div>
           ) : (
             <div className="space-y-1.5">
-              <Label>Rover</Label>
+              <Label htmlFor="f-rover">Rover</Label>
               <RoverSelect value={userId} onChange={setUserId} options={roverOptions} />
             </div>
           )}
           {periodKey === CUSTOM && (
             <div className="space-y-1.5">
-              <Label>Rover</Label>
+              <Label htmlFor="f-rover">Rover</Label>
               <RoverSelect value={userId} onChange={setUserId} options={roverOptions} />
             </div>
           )}
           <div className="space-y-1.5">
-            <Label>Estado (registros)</Label>
+            <Label htmlFor="f-estado">Estado (registros)</Label>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger>
+              <SelectTrigger id="f-estado">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -239,7 +243,7 @@ function RoverSelect({
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger>
+      <SelectTrigger id="f-rover">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

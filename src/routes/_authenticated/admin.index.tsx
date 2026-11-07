@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/brand/page-header";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -17,7 +18,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, RefreshCw, Users, Percent, XCircle, ChevronDown, ChevronRight, Pencil, Trash2, Clock } from "lucide-react";
+import {
+  Loader2,
+  RefreshCw,
+  Users,
+  Percent,
+  XCircle,
+  ChevronDown,
+  ChevronRight,
+  Pencil,
+  Trash2,
+  Clock,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/")({ component: AdminPage });
@@ -59,45 +71,50 @@ function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard administrativo</h1>
-          <p className="text-sm text-muted-foreground">
-            Resumen del semestre vigente (zona horaria El Salvador).
-          </p>
-        </div>
-        {isSuper && (
-          <Button onClick={() => finalize.mutate()} disabled={finalize.isPending}>
-            {finalize.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            )}
-            Cerrar sábados pasados
-          </Button>
-        )}
-      </header>
+      <PageHeader
+        eyebrow="Administración"
+        title="Dashboard administrativo"
+        description="Resumen del semestre vigente (zona horaria El Salvador)."
+        actions={
+          isSuper && (
+            <Button onClick={() => finalize.mutate()} disabled={finalize.isPending}>
+              {finalize.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              Cerrar sábados pasados
+            </Button>
+          )
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-6">
-            <Users className="h-5 w-5 text-primary" />
+            <KpiIcon>
+              <Users className="h-5 w-5" />
+            </KpiIcon>
             <div className="mt-2 text-sm text-muted-foreground">Usuarios</div>
-            <div className="text-3xl font-bold">{totalUsers}</div>
+            <div className="font-display text-3xl font-bold text-navy">{totalUsers}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <Percent className="h-5 w-5 text-primary" />
+            <KpiIcon>
+              <Percent className="h-5 w-5" />
+            </KpiIcon>
             <div className="mt-2 text-sm text-muted-foreground">% promedio</div>
-            <div className="text-3xl font-bold">{avg.toFixed(1)}%</div>
+            <div className="font-display text-3xl font-bold text-navy">{avg.toFixed(1)}%</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <XCircle className="h-5 w-5 text-destructive" />
+            <KpiIcon tone="danger">
+              <XCircle className="h-5 w-5" />
+            </KpiIcon>
             <div className="mt-2 text-sm text-muted-foreground">Inasistencias totales</div>
-            <div className="text-3xl font-bold">{totalMissed}</div>
+            <div className="font-display text-3xl font-bold text-navy">{totalMissed}</div>
           </CardContent>
         </Card>
       </div>
@@ -159,9 +176,7 @@ function AdminPage() {
                 className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-3 text-sm"
               >
                 <div>
-                  <div className="font-medium">
-                    {r.profiles?.full_name || r.profiles?.email}
-                  </div>
+                  <div className="font-medium">{r.profiles?.full_name || r.profiles?.email}</div>
                   <div className="text-xs text-muted-foreground">
                     {r.saturday_date}
                     {r.justification ? ` — ${r.justification}` : ""}
@@ -187,7 +202,15 @@ function AdminPage() {
   );
 }
 
-function UserAttendanceRow({ row, attendances, canEdit }: { row: any; attendances: any[]; canEdit?: boolean }) {
+function UserAttendanceRow({
+  row,
+  attendances,
+  canEdit,
+}: {
+  row: any;
+  attendances: any[];
+  canEdit?: boolean;
+}) {
   const [open, setOpen] = useState(false);
 
   const grouped = useMemo(() => {
@@ -214,11 +237,7 @@ function UserAttendanceRow({ row, attendances, canEdit }: { row: any; attendance
             className="rounded p-1 hover:bg-muted"
             aria-label={open ? "Ocultar detalle" : "Ver detalle"}
           >
-            {open ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
+            {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </td>
         <td className="py-2 pr-3">
@@ -337,12 +356,19 @@ function AttendanceItemActions({ item }: { item: any }) {
           justification: status === "Permiso" ? just : undefined,
         },
       }),
-    onSuccess: () => { toast.success("Asistencia actualizada"); setEditing(false); refresh(); },
+    onSuccess: () => {
+      toast.success("Asistencia actualizada");
+      setEditing(false);
+      refresh();
+    },
     onError: (e: any) => toast.error(e.message),
   });
   const del = useMutation({
     mutationFn: () => delFn({ data: { userId: item.user_id, saturdayDate: item.saturday_date } }),
-    onSuccess: () => { toast.success("Registro eliminado"); refresh(); },
+    onSuccess: () => {
+      toast.success("Registro eliminado");
+      refresh();
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -350,6 +376,7 @@ function AttendanceItemActions({ item }: { item: any }) {
     return (
       <div className="mt-2 w-full space-y-2">
         <select
+          aria-label="Estado de asistencia"
           className="w-full rounded border border-input bg-background p-1 text-xs"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -359,18 +386,42 @@ function AttendanceItemActions({ item }: { item: any }) {
           <option>No Asistió</option>
         </select>
         {status === "Permiso" && (
-          <Textarea value={just} onChange={(e) => setJust(e.target.value)} placeholder="Justificación" className="text-xs" />
+          <Textarea
+            value={just}
+            onChange={(e) => setJust(e.target.value)}
+            placeholder="Justificación"
+            className="text-xs"
+          />
         )}
         <div className="flex gap-1">
-          <Button size="sm" className="h-7 text-xs" disabled={save.isPending} onClick={() => save.mutate()}>Guardar</Button>
-          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEditing(false)}>Cancelar</Button>
+          <Button
+            size="sm"
+            className="h-7 text-xs"
+            disabled={save.isPending}
+            onClick={() => save.mutate()}
+          >
+            Guardar
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs"
+            onClick={() => setEditing(false)}
+          >
+            Cancelar
+          </Button>
         </div>
       </div>
     );
   }
   return (
     <div className="flex gap-1">
-      <button type="button" aria-label="Editar" className="rounded p-1 hover:bg-muted" onClick={() => setEditing(true)}>
+      <button
+        type="button"
+        aria-label="Editar"
+        className="rounded p-1 hover:bg-muted"
+        onClick={() => setEditing(true)}
+      >
         <Pencil className="h-3.5 w-3.5" />
       </button>
       <button
@@ -378,7 +429,9 @@ function AttendanceItemActions({ item }: { item: any }) {
         aria-label="Eliminar"
         className="rounded p-1 text-destructive hover:bg-muted"
         disabled={del.isPending}
-        onClick={() => { if (confirm(`¿Eliminar el registro del ${item.saturday_date}?`)) del.mutate(); }}
+        onClick={() => {
+          if (confirm(`¿Eliminar el registro del ${item.saturday_date}?`)) del.mutate();
+        }}
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>
@@ -417,11 +470,16 @@ function AttendanceEditor({ users }: { users: any[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Pencil className="h-4 w-4" /> Registrar o editar asistencia</CardTitle>
-        <CardDescription>Aplica a cualquier usuario, incluido tú, sin importar la hora de cierre.</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          <Pencil className="h-4 w-4" /> Registrar o editar asistencia
+        </CardTitle>
+        <CardDescription>
+          Aplica a cualquier usuario, incluido tú, sin importar la hora de cierre.
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-4">
         <select
+          aria-label="Usuario"
           className="rounded-md border border-input bg-background p-2 text-sm"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
@@ -430,11 +488,19 @@ function AttendanceEditor({ users }: { users: any[] }) {
           {[...users]
             .sort((a, b) => (a.full_name || a.email).localeCompare(b.full_name || b.email))
             .map((u) => (
-              <option key={u.id} value={u.id}>{u.full_name || u.email}</option>
+              <option key={u.id} value={u.id}>
+                {u.full_name || u.email}
+              </option>
             ))}
         </select>
-        <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <Input
+          type="date"
+          aria-label="Sábado"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
         <select
+          aria-label="Estado de asistencia"
           className="rounded-md border border-input bg-background p-2 text-sm"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -496,26 +562,52 @@ function CutoffSettingsCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Clock className="h-4 w-4" /> Cierre de confirmación</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Clock className="h-4 w-4" /> Cierre de confirmación
+        </CardTitle>
         <CardDescription>
-          Día y hora (El Salvador) hasta la cual los usuarios pueden confirmar o justificar cada sábado.
+          Día y hora (El Salvador) hasta la cual los usuarios pueden confirmar o justificar cada
+          sábado.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap items-center gap-3">
         <select
+          aria-label="Día de cierre"
           className="rounded-md border border-input bg-background p-2 text-sm"
           value={curDay}
           onChange={(e) => setDay(Number(e.target.value))}
         >
           {DAY_LABELS.map((l, i) => (
-            <option key={l} value={i}>{i === 0 ? "El mismo sábado" : `${l} siguiente`}</option>
+            <option key={l} value={i}>
+              {i === 0 ? "El mismo sábado" : `${l} siguiente`}
+            </option>
           ))}
         </select>
-        <Input type="time" className="w-36" value={curTime} onChange={(e) => setTime(e.target.value)} />
+        <Input
+          type="time"
+          aria-label="Hora de cierre"
+          className="w-36"
+          value={curTime}
+          onChange={(e) => setTime(e.target.value)}
+        />
         <Button onClick={() => save.mutate()} disabled={save.isPending}>
           {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Guardar
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+function KpiIcon({ children, tone }: { children: React.ReactNode; tone?: "danger" }) {
+  return (
+    <span
+      className={
+        tone === "danger"
+          ? "inline-flex h-9 w-9 items-center justify-center rounded-lg bg-destructive/10 text-destructive"
+          : "inline-flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-gold"
+      }
+    >
+      {children}
+    </span>
   );
 }

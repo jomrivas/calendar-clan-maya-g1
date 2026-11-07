@@ -1,3 +1,10 @@
+/* Tipografías de marca, auto-hospedadas (sin Google Fonts) — subset latin (incluye á é í ó ú ñ) */
+@import "@fontsource/lato/latin-400.css";
+@import "@fontsource/lato/latin-700.css";
+@import "@fontsource/poppins/latin-500.css";
+@import "@fontsource/poppins/latin-600.css";
+@import "@fontsource/poppins/latin-700.css";
+@import "@fontsource/poppins/latin-800.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -40,41 +47,67 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-warning-strong: var(--warning-strong);
+  --color-success-strong: var(--success-strong);
+  --color-destructive-strong: var(--destructive-strong);
+
+  /* Paleta de marca Clan Maya G1 (clases: bg-navy, text-gold, etc.) */
+  --color-navy: #0f1d38;
+  --color-navy-2: #16294f;
+  --color-navy-3: #0a1428;
+  --color-brown: #634b30;
+  --color-gold: #e6be3c;
+  --color-gold-2: #f4d876;
+  --color-gold-dim: #c9a02f;
+  --color-purple: #4a1a7b;
+  --color-purple-2: #6b2caa;
+  --color-cream: #faf6f1;
+  --color-cream-2: #f1e9dc;
+  --color-ink: #1b140c;
+
+  --font-sans: "Lato", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.99 0.005 240);
-  --foreground: oklch(0.20 0.04 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.20 0.04 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.20 0.04 250);
-  --primary: oklch(0.50 0.18 255);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.01 250);
-  --secondary-foreground: oklch(0.25 0.04 250);
-  --muted: oklch(0.96 0.01 250);
-  --muted-foreground: oklch(0.55 0.03 250);
-  --accent: oklch(0.95 0.03 255);
-  --accent-foreground: oklch(0.30 0.10 255);
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.62 0.16 150);
-  --success-foreground: oklch(0.99 0 0);
-  --warning: oklch(0.75 0.16 75);
-  --warning-foreground: oklch(0.20 0.04 250);
-  --border: oklch(0.92 0.01 250);
-  --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.50 0.18 255);
-  --sidebar: oklch(0.98 0.01 250);
-  --sidebar-foreground: oklch(0.25 0.04 250);
-  --sidebar-primary: oklch(0.50 0.18 255);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.95 0.02 255);
-  --sidebar-accent-foreground: oklch(0.30 0.10 255);
-  --sidebar-border: oklch(0.92 0.01 250);
-  --sidebar-ring: oklch(0.50 0.18 255);
+  /* Identidad Clan Maya G1 — https://clan-maya-g1.netlify.app
+     Contrastes verificados (WCAG AA): texto 16.9:1, secundario 5.5:1,
+     botón primario 15.6:1, foco púrpura 7.6:1, borde de input 3.6:1. */
+  --radius: 0.875rem;
+  --background: #faf6f1;
+  --foreground: #1b140c;
+  --card: #ffffff;
+  --card-foreground: #1b140c;
+  --popover: #ffffff;
+  --popover-foreground: #1b140c;
+  --primary: #0f1d38;
+  --primary-foreground: #faf6f1;
+  --secondary: #f1e9dc;
+  --secondary-foreground: #0f1d38;
+  --muted: #f1e9dc;
+  --muted-foreground: #6b6357;
+  --accent: #fbf1d3;
+  --accent-foreground: #0f1d38;
+  --destructive: #b3261e;
+  --destructive-foreground: #ffffff;
+  --success: #2e7d4f;
+  --success-foreground: #ffffff;
+  --warning: #e6be3c;
+  --warning-foreground: #0f1d38;
+  --warning-strong: #6e500c;
+  --success-strong: #1e5a37;
+  --destructive-strong: #8f1d17;
+  --border: #e8decf;
+  --input: #958670;
+  --ring: #6b2caa;
+  --sidebar: #0f1d38;
+  --sidebar-foreground: #faf6f1;
+  --sidebar-primary: #e6be3c;
+  --sidebar-primary-foreground: #0f1d38;
+  --sidebar-accent: #1b2c50;
+  --sidebar-accent-foreground: #f4d876;
+  --sidebar-border: #22355c;
+  --sidebar-ring: #e6be3c;
 }
 
 @layer base {
@@ -84,6 +117,62 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-navy);
+  }
+}
+
+@layer components {
+  /* Greca maya (mismo motivo que el sitio del clan) */
+  .greca-strip {
+    height: 12px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='45' height='20' viewBox='0 0 45 20'><path d='M0 0 H45 V10 H22 V4 H7 V16 H45 V20 H0 Z' fill='%23E6BE3C'/></svg>");
+    background-repeat: repeat-x;
+    background-size: 27px 12px;
+  }
+  .greca-strip-brown {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='45' height='20' viewBox='0 0 45 20'><path d='M0 0 H45 V10 H22 V4 H7 V16 H45 V20 H0 Z' fill='%23634B30'/></svg>");
+  }
+  /* Fondo del panel de bienvenida (radial navy + brillo dorado) */
+  .bg-maya-hero {
+    background:
+      radial-gradient(
+        circle at 50% 28%,
+        rgb(230 190 60 / 0.16) 0%,
+        rgb(230 190 60 / 0.04) 38%,
+        transparent 62%
+      ),
+      radial-gradient(
+        circle at 50% 30%,
+        var(--color-navy-2) 0%,
+        var(--color-navy) 55%,
+        var(--color-navy-3) 100%
+      );
+  }
+  .bg-gold-gradient {
+    background: linear-gradient(135deg, var(--color-gold-2), var(--color-gold));
+  }
+  .bg-earth-gradient {
+    background: linear-gradient(90deg, var(--color-brown), var(--color-gold));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
   }
 }

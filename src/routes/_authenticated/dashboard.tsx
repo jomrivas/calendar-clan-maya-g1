@@ -9,7 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, CheckCircle2, XCircle, FileText, Loader2, Download } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  XCircle,
+  FileText,
+  Loader2,
+  Download,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   formatYmd,
@@ -20,14 +28,26 @@ import {
   nowInSV,
 } from "@/lib/sv-time";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/brand/page-header";
+import { Greca } from "@/components/brand/greca";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
 const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];
 
 function DashboardPage() {
@@ -120,10 +140,7 @@ function DashboardPage() {
     onError: (e: any) => toast.error(e.message ?? "Error al enviar"),
   });
 
-  const holidaySet = useMemo(
-    () => new Set(holidays.map((h: any) => h.holiday_date)),
-    [holidays],
-  );
+  const holidaySet = useMemo(() => new Set(holidays.map((h: any) => h.holiday_date)), [holidays]);
 
   const attendanceMap = useMemo(() => {
     const m = new Map<string, any>();
@@ -165,78 +182,90 @@ function DashboardPage() {
   };
 
   const prevMonth = () =>
-    setView((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { ...v, month: v.month - 1 }));
+    setView((v) =>
+      v.month === 0 ? { year: v.year - 1, month: 11 } : { ...v, month: v.month - 1 },
+    );
   const nextMonth = () =>
-    setView((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 }));
+    setView((v) =>
+      v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 },
+    );
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Mi asistencia</h1>
-          <p className="text-sm text-muted-foreground">
-            Confirma tu asistencia {describeCutoff(settings)} (hora de El Salvador).
-          </p>
-        </div>
-        <Button variant="outline" onClick={exportHistory} disabled={exporting}>
-          {exporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
-          Descargar mi historial {view.year}
-        </Button>
-      </header>
+      <PageHeader
+        eyebrow="Mi espacio rover"
+        title="Mi asistencia"
+        description={<>Confirma tu asistencia {describeCutoff(settings)} (hora de El Salvador).</>}
+        actions={
+          <Button
+            variant="outline"
+            onClick={exportHistory}
+            disabled={exporting}
+            className="bg-white"
+          >
+            {exporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Descargar mi historial {view.year}
+          </Button>
+        }
+      />
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <SummaryCard
-          label="Asistidos"
-          value={semesterData?.attended ?? 0}
-          color="success"
-        />
-        <SummaryCard
-          label="Permisos"
-          value={semesterData?.excused ?? 0}
-          color="warning"
-        />
-        <SummaryCard
-          label="No asistidos"
-          value={semesterData?.missed ?? 0}
-          color="destructive"
-        />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Porcentaje semestre {sem.semester === 1 ? "Ene-Jun" : "Jul-Dic"} {sem.year}</CardTitle>
-          <CardDescription>
-            {semesterData?.counted ?? 0} de {semesterData?.eligible_saturdays ?? 0} sábados elegibles
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-end gap-3">
-            <div className="text-4xl font-bold text-primary">
-              {Number(semesterData?.percentage ?? 0).toFixed(1)}%
+      {/* Semestre: tarjeta destacada de marca */}
+      <section className="bg-maya-hero overflow-hidden rounded-2xl text-cream shadow-lg">
+        <Greca />
+        <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[1.2fr_1fr] md:items-center">
+          <div>
+            <div className="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold-2">
+              Semestre {sem.semester === 1 ? "Ene–Jun" : "Jul–Dic"} {sem.year}
             </div>
-          </div>
-          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div className="mt-2 flex items-end gap-3">
+              <span className="bg-gradient-to-br from-gold-2 to-gold bg-clip-text font-display text-6xl font-extrabold leading-none text-transparent">
+                {Number(semesterData?.percentage ?? 0).toFixed(1)}%
+              </span>
+              <span className="pb-1 text-sm text-cream/75">de asistencia</span>
+            </div>
             <div
-              className="h-full bg-primary transition-all"
-              style={{ width: `${Math.min(100, Number(semesterData?.percentage ?? 0))}%` }}
-            />
+              className="mt-5 h-2.5 w-full overflow-hidden rounded-full bg-navy-3/70"
+              role="progressbar"
+              aria-label="Porcentaje de asistencia del semestre"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(Number(semesterData?.percentage ?? 0))}
+            >
+              <div
+                className="bg-earth-gradient h-full rounded-full transition-all"
+                style={{ width: `${Math.min(100, Number(semesterData?.percentage ?? 0))}%` }}
+              />
+            </div>
+            <p className="mt-2 text-sm text-cream/75">
+              {semesterData?.counted ?? 0} de {semesterData?.eligible_saturdays ?? 0} sábados
+              elegibles (asistencias + permisos)
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <dl className="grid grid-cols-3 gap-3">
+            <SummaryStat label="Asistidos" value={semesterData?.attended ?? 0} dot="bg-success" />
+            <SummaryStat label="Permisos" value={semesterData?.excused ?? 0} dot="bg-gold" />
+            <SummaryStat label="Ausencias" value={semesterData?.missed ?? 0} dot="bg-destructive" />
+          </dl>
+        </div>
+      </section>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-4">
           <div>
-            <CardTitle>
+            <CardTitle className="font-display text-lg text-navy">
               {MONTHS[view.month]} {view.year}
             </CardTitle>
             <CardDescription>Sábados del mes</CardDescription>
           </div>
           <div className="flex gap-1">
-            <Button size="icon" variant="outline" onClick={prevMonth}>
+            <Button size="icon" variant="outline" onClick={prevMonth} aria-label="Mes anterior">
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="outline" onClick={nextMonth}>
+            <Button size="icon" variant="outline" onClick={nextMonth} aria-label="Mes siguiente">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -253,31 +282,36 @@ function DashboardPage() {
             return (
               <div
                 key={sat}
-                className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
+                className={cn(
+                  "flex flex-col gap-3 rounded-xl border bg-white p-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between",
+                  canMark && !rec ? "border-gold/60 shadow-sm" : "border-border",
+                )}
               >
-                <div>
-                  <div className="font-medium">{sat}</div>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {isHoliday && (
-                      <Badge variant="secondary">
-                        Feriado: {(holidays.find((h: any) => h.holiday_date === sat) as any)?.name}
-                      </Badge>
-                    )}
-                    {rec && <StatusBadge status={rec.status} />}
-                    {!rec && !isHoliday && canMark && (
-                      <Badge variant="outline">Pendiente</Badge>
-                    )}
-                    {!rec && !isHoliday && !canMark && (
-                      <Badge variant="outline" className="border-destructive/40 text-destructive">
-                        Cierre pasado
-                      </Badge>
+                <div className="flex items-start gap-4">
+                  <DateTile ymd={sat} muted={isHoliday || (!canMark && !rec)} />
+                  <div>
+                    <div className="font-display font-semibold text-navy">{longDateEs(sat)}</div>
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {isHoliday && (
+                        <Badge variant="secondary">
+                          Feriado:{" "}
+                          {(holidays.find((h: any) => h.holiday_date === sat) as any)?.name}
+                        </Badge>
+                      )}
+                      {rec && <StatusBadge status={rec.status} />}
+                      {!rec && !isHoliday && canMark && <Badge variant="outline">Pendiente</Badge>}
+                      {!rec && !isHoliday && !canMark && (
+                        <Badge variant="outline" className="border-destructive/40 text-destructive">
+                          Cierre pasado
+                        </Badge>
+                      )}
+                    </div>
+                    {rec?.justification && (
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Justificación: {rec.justification}
+                      </p>
                     )}
                   </div>
-                  {rec?.justification && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Justificación: {rec.justification}
-                    </p>
-                  )}
                 </div>
 
                 {!isHoliday && canMark && (
@@ -324,9 +358,7 @@ function DashboardPage() {
                         }
                         disabled={justifyMut.isPending || justifyText.trim().length < 5}
                       >
-                        {justifyMut.isPending && (
-                          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                        )}
+                        {justifyMut.isPending && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
                         Enviar
                       </Button>
                       <Button
@@ -371,26 +403,58 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function SummaryCard({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: "success" | "warning" | "destructive";
-}) {
-  const colorClass = {
-    success: "text-success",
-    warning: "text-warning",
-    destructive: "text-destructive",
-  }[color];
+function SummaryStat({ label, value, dot }: { label: string; value: number; dot: string }) {
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="text-sm text-muted-foreground">{label}</div>
-        <div className={cn("mt-1 text-3xl font-bold", colorClass)}>{value}</div>
-      </CardContent>
-    </Card>
+    <div className="rounded-xl bg-navy-3/50 px-3 py-3 ring-1 ring-cream/10">
+      <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-cream/70">
+        <span aria-hidden="true" className={cn("h-2 w-2 rounded-full", dot)} />
+        {label}
+      </dt>
+      <dd className="mt-1 font-display text-3xl font-bold text-cream">{value}</dd>
+    </div>
+  );
+}
+
+const SHORT_MONTHS = [
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
+];
+
+/** "2026-11-14" → "Sábado 14 de noviembre" */
+function longDateEs(ymd: string) {
+  const [, m, d] = ymd.split("-").map(Number);
+  return `Sábado ${d} de ${MONTHS[m - 1].toLowerCase()}`;
+}
+
+function DateTile({ ymd, muted }: { ymd: string; muted?: boolean }) {
+  const [, m, d] = ymd.split("-").map(Number);
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl font-display leading-none",
+        muted ? "bg-muted text-muted-foreground" : "bg-navy text-cream",
+      )}
+    >
+      <span className="text-xl font-bold">{d}</span>
+      <span
+        className={cn(
+          "mt-0.5 text-[10px] font-bold uppercase tracking-wider",
+          !muted && "text-gold-2",
+        )}
+      >
+        {SHORT_MONTHS[m - 1]}
+      </span>
+    </div>
   );
 }

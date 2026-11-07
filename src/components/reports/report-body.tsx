@@ -28,9 +28,9 @@ const COLORS = {
 } as const;
 
 const CELL_CLASS: Record<CellStatus, string> = {
-  Asistió: "bg-success/20 text-success",
-  Permiso: "bg-warning/25 text-warning-foreground",
-  "No Asistió": "bg-destructive/15 text-destructive",
+  Asistió: "bg-success/15 text-success-strong",
+  Permiso: "bg-warning/25 text-warning-strong",
+  "No Asistió": "bg-destructive/10 text-destructive-strong",
   "Sin marcar": "bg-muted text-muted-foreground",
   "N/A": "text-muted-foreground/40",
 };
@@ -120,7 +120,10 @@ export function ReportBody({ report }: { report: Report }) {
                     }
                     contentStyle={{ borderRadius: 8, fontSize: 12 }}
                   />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Legend
+                    wrapperStyle={{ fontSize: 12 }}
+                    formatter={(value) => <span className="text-foreground">{value}</span>}
+                  />
                   <Bar dataKey="attended" name="Asistió" stackId="s" fill={COLORS["Asistió"]} />
                   <Bar dataKey="excused" name="Permiso" stackId="s" fill={COLORS["Permiso"]} />
                   <Bar dataKey="missed" name="No asistió" stackId="s" fill={COLORS["No Asistió"]} />
@@ -380,9 +383,21 @@ function Kpi({
   return (
     <Card>
       <CardContent className="pt-6">
-        <Icon className={cn("h-5 w-5", tone === "danger" ? "text-destructive" : "text-primary")} />
+        <span
+          className={cn(
+            "inline-flex h-9 w-9 items-center justify-center rounded-lg",
+            tone === "danger" ? "bg-destructive/10 text-destructive" : "bg-navy text-gold",
+          )}
+        >
+          <Icon className="h-5 w-5" />
+        </span>
         <div className="mt-2 text-sm text-muted-foreground">{label}</div>
-        <div className={cn("text-3xl font-bold", tone === "danger" && "text-destructive")}>
+        <div
+          className={cn(
+            "font-display text-3xl font-bold text-navy",
+            tone === "danger" && "text-destructive",
+          )}
+        >
           {value}
         </div>
         {hint && <div className="text-xs text-muted-foreground">{hint}</div>}

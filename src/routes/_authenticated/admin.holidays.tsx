@@ -1,3 +1,5 @@
+import { formatDateEs } from "@/lib/reports";
+import { PageHeader } from "@/components/brand/page-header";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -42,7 +44,8 @@ function HolidaysPage() {
     mutationFn: (v: { date: string; name: string }) => addFn({ data: v }),
     onSuccess: () => {
       toast.success("Feriado agregado");
-      setDate(""); setName("");
+      setDate("");
+      setName("");
       qc.invalidateQueries({ queryKey: ["holidays-admin"] });
       qc.invalidateQueries({ queryKey: ["holidays"] });
     },
@@ -62,12 +65,11 @@ function HolidaysPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Feriados (El Salvador)</h1>
-        <p className="text-sm text-muted-foreground">
-          Los sábados que coinciden con feriados quedan excluidos del cálculo.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Administración"
+        title="Feriados de El Salvador"
+        description="Los sábados que coinciden con feriados quedan excluidos del cálculo."
+      />
 
       {isSuper && (
         <Card>
@@ -79,12 +81,14 @@ function HolidaysPage() {
             <div className="flex flex-wrap items-end gap-2">
               <Input
                 type="date"
+                aria-label="Fecha del feriado"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-44"
               />
               <Input
                 placeholder="Nombre del feriado"
+                aria-label="Nombre del feriado"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="flex-1 min-w-[200px]"
@@ -113,13 +117,16 @@ function HolidaysPage() {
                 className="flex items-center justify-between rounded border border-border px-3 py-2 text-sm"
               >
                 <div>
-                  <span className="font-medium">{h.holiday_date}</span>
+                  <span className="font-display font-semibold text-navy">
+                    {formatDateEs(h.holiday_date)}
+                  </span>
                   <span className="ml-2 text-muted-foreground">{h.name}</span>
                 </div>
                 {isSuper && (
                   <Button
                     size="icon"
                     variant="ghost"
+                    aria-label={`Eliminar feriado ${h.name}`}
                     onClick={() => rm.mutate(h.holiday_date)}
                     disabled={rm.isPending}
                   >
