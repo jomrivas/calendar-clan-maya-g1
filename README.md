@@ -13,8 +13,18 @@ Alcance y arquitectura: ver [`SPEC.md`](./SPEC.md).
 git clone https://github.com/jomrivas/calendar-clan-maya-g1.git
 cd calendar-clan-maya-g1
 npm ci
-Copy-Item .env.example .env   # completar con las claves del proyecto Supabase
-npm run dev                   # http://localhost:3000
+New-Item .env -ItemType File   # completar con las variables de abajo (no se versiona)
+npm run dev                    # http://localhost:3000
+```
+
+Contenido de `.env` (local):
+
+```dotenv
+VITE_SUPABASE_URL=https://jrnulomihiemizemjpat.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key: Supabase → Project Settings → API Keys>
+VITE_SITE_URL=http://localhost:3000
+VITE_ALLOW_SIGNUP=false
+SUPABASE_SERVICE_ROLE_KEY=<secret key sb_secret_…  — solo servidor, nunca con prefijo VITE_>
 ```
 
 | Script | Uso |
